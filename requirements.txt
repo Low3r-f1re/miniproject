@@ -6,6 +6,9 @@ Flask-Babel>=4.0.0
 Flask-Limiter>=3.0.0
 Flask-Migrate>=4.0.0
 
+# Flask-Limiter dependencies
+rich>=13.0.0
+
 # Production server
 gunicorn>=21.2.0
 
