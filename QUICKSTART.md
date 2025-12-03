@@ -72,22 +72,16 @@ https://travel-planner-XXXXX.onrender.com
 
 📖 **Need more help?** See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed guide.
 
-## 🤖 Optional: Enable AI Features
+## 🤖 Enable AI Features with Your OpenRouter API Key
 
-Your app works without API keys, but AI trip planning features will be disabled. To enable them later:
-
-**Get API Keys (Free):**
-1. **GEMINI_API_KEY**: https://makersuite.google.com/app/apikey (Google account required)
-2. **OPENROUTER_API_KEY**: https://openrouter.ai/keys (Free credits available)
-
-**Add to Render:**
+**Add Your OpenRouter API Key to Render:**
 1. Go to your service in Render dashboard
 2. Click **"Environment"** tab
-3. Add variables:
-   - `GEMINI_API_KEY` = your-key
-   - `OPENROUTER_API_KEY` = your-key
+3. Add this variable:
+   - Key: `OPENROUTER_API_KEY`
+   - Value: your-openrouter-key-here
 4. Click **"Save Changes"**
-5. App will redeploy with AI features enabled
+5. App will redeploy with AI features enabled (takes 2-3 minutes)
 
 **AI Features Include:**
 - 🤖 Personalized trip itineraries
