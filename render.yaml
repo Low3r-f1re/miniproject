@@ -26,17 +26,6 @@ services:
         value: true
     healthCheckPath: /
 
-  # PostgreSQL Database
-  - type: pserv
-    name: travel-db
-    env: docker
-    plan: free  # Free tier (expires after 90 days, but data is kept)
-    region: singapore
-    disk:
-      name: travel-data
-      mountPath: /var/lib/postgresql/data
-      sizeGB: 1  # Free tier includes 1GB storage
-
 databases:
   - name: travel-db
     databaseName: travel_db
