@@ -1,14 +1,8 @@
 # 🚀 Quick Deployment Guide
 
-Deploy your Travel Planner app to Render.com in 5 minutes!
+Deploy your Travel Planner app to Render.com in 3 minutes!
 
-## Before You Start
-
-Get your API keys ready:
-1. **GEMINI_API_KEY**: https://makersuite.google.com/app/apikey
-2. **OPENROUTER_API_KEY**: https://openrouter.ai/keys
-
-## Deployment Steps
+## Deployment Steps (No API Keys Required!)
 
 ### 1️⃣ Push to GitHub
 
@@ -39,19 +33,7 @@ Render will automatically:
 - ✅ Run database migrations
 - ✅ Start your app with HTTPS
 
-### 3️⃣ Add API Keys
-
-After deployment starts:
-
-1. Go to **your web service** in Render dashboard
-2. Click **"Environment"** tab
-3. Add these variables:
-   - `GEMINI_API_KEY` = your-gemini-key-here
-   - `OPENROUTER_API_KEY` = your-openrouter-key-here
-4. Click **"Save Changes"**
-5. Your app will automatically redeploy
-
-### 4️⃣ Access Your App
+### 3️⃣ Access Your App
 
 Your app will be live at:
 ```
@@ -89,6 +71,29 @@ https://travel-planner-XXXXX.onrender.com
 - Check database service is running
 
 📖 **Need more help?** See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed guide.
+
+## 🤖 Optional: Enable AI Features
+
+Your app works without API keys, but AI trip planning features will be disabled. To enable them later:
+
+**Get API Keys (Free):**
+1. **GEMINI_API_KEY**: https://makersuite.google.com/app/apikey (Google account required)
+2. **OPENROUTER_API_KEY**: https://openrouter.ai/keys (Free credits available)
+
+**Add to Render:**
+1. Go to your service in Render dashboard
+2. Click **"Environment"** tab
+3. Add variables:
+   - `GEMINI_API_KEY` = your-key
+   - `OPENROUTER_API_KEY` = your-key
+4. Click **"Save Changes"**
+5. App will redeploy with AI features enabled
+
+**AI Features Include:**
+- 🤖 Personalized trip itineraries
+- 🍽️ Restaurant recommendations
+- 💰 Budget estimates
+- 🗺️ Activity suggestions
 
 ---
 

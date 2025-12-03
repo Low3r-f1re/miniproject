@@ -51,15 +51,9 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', MAIL_USERNAME)
     
-    # API keys
+    # API keys (Optional - AI features won't work without them)
     GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
-    if not GEMINI_API_KEY and FLASK_ENV == 'production':
-        raise ValueError('GEMINI_API_KEY environment variable is required in production')
-        
     OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY')
-    if not OPENROUTER_API_KEY and FLASK_ENV == 'production':
-        raise ValueError('OPENROUTER_API_KEY environment variable is required in production')
-        
     PUBLIC_GOOGLE_MAPS_KEY = os.environ.get('PUBLIC_GOOGLE_MAPS_KEY', '')
     
     # Internationalization

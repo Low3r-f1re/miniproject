@@ -16,14 +16,15 @@ services:
         fromDatabase:
           name: travel-db
           property: connectionString
-      - key: GEMINI_API_KEY
-        sync: false  # You'll need to add this manually in Render dashboard
-      - key: OPENROUTER_API_KEY
-        sync: false  # You'll need to add this manually in Render dashboard
       - key: PYTHON_VERSION
         value: 3.11.0
       - key: SESSION_COOKIE_SECURE
         value: true
+      # Optional: Add these later if you want AI features
+      # - key: GEMINI_API_KEY
+      #   sync: false
+      # - key: OPENROUTER_API_KEY
+      #   sync: false
     healthCheckPath: /
 
 databases:
