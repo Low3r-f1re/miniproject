@@ -6,7 +6,7 @@ services:
     region: singapore  # Or choose: oregon, frankfurt, ohio, singapore
     plan: free  # Free tier
     buildCommand: "./build.sh"
-    startCommand: "gunicorn wsgi:app"
+    startCommand: "gunicorn --timeout 240 --workers 2 wsgi:app"
     envVars:
       - key: FLASK_ENV
         value: production
