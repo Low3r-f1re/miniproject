@@ -14,9 +14,15 @@ class Config:
     
     # Database configuration
     DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///tour.db')
+    
+    # Fix for Render.com PostgreSQL (postgres:// -> postgresql://)
+    if DATABASE_URL.startswith('postgres://'):
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    
+    # Convert relative sqlite path to absolute (for local development)
     if DATABASE_URL.startswith('sqlite:///') and not os.path.isabs(DATABASE_URL[10:]):
-        # Convert relative sqlite path to absolute
         DATABASE_URL = f'sqlite:///{os.path.abspath(DATABASE_URL[10:])}'
+    
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = os.environ.get('SQLALCHEMY_ECHO', 'false').lower() == 'true'

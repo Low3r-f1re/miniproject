@@ -55,6 +55,11 @@ tour.db
 # Logs
 *.log
 logs/
+app.log
+
+# Uploads (user-generated content)
+uploads/
+static/uploads/
 
 # Testing
 .pytest_cache/
