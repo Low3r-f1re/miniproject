@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% block title %}My Destinations — Mini Project{% endblock %}
+{% block content %}
+
+<div class="container">
+  <!-- Simple Header -->
+  <div class="card" style="margin: 20px 0;">
+    <div class="card-header">
+      <h1 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-map-marked-alt"></i>
+        My Travel Destinations
+      </h1>
+      <p style="margin: 5px 0 0 0; color: #666;">Save and manage your favorite places to visit</p>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+
+    <!-- Left Side - Add New Destination -->
+    <div style="flex: 1; min-width: 350px;">
+
+      <div class="card">
+        <div class="card-header">
+          <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-plus-circle"></i>
+            Add New Destination
+          </h3>
+        </div>
+        <div class="card-body">
+          <form class="destination-form" onsubmit="return false;">
+
+            <div class="form-group">
+              <label for="destTitle">Destination Name *</label>
+              <input id="destTitle" type="text" class="form-control" placeholder="e.g., Paris, France" required>
+            </div>
+
+            <div class="form-group">
+              <label for="destCategory">Type of Place</label>
+              <select id="destCategory" class="form-control">
+                <option value="cities">City</option>
+                <option value="beaches">Beach</option>
+                <option value="mountains">Mountains</option>
+                <option value="cultural">Museum/Cultural Site</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="destBudget">Budget Level</label>
+              <select id="destBudget" class="form-control">
+                <option value="budget">Budget Friendly ($)</option>
+                <option value="mid">Mid-Range ($$)</option>
+                <option value="luxury">Luxury ($$$)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="destDescription">Notes (Optional)</label>
+              <textarea id="destDescription" class="form-control" rows="3" placeholder="Any notes about this place..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="destWebsite">Website (Optional)</label>
+              <input id="destWebsite" type="url" class="form-control" placeholder="https://example.com">
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
+              <button id="addDestinationBtn" type="submit" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Save Destination
+              </button>
+              <div id="destMessage" class="text-muted"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Side - My Destinations List & Map -->
+    <div style="flex: 1; min-width: 350px;">
+
+      <!-- Map Section -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header">
+          <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-map"></i>
+            Explore Destinations Map
+          </h3>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="locationSearch">Search Location</label>
+            <input id="locationSearch" type="text" class="form-control" placeholder="Enter a city or location...">
+          </div>
+          <div id="map-status" style="padding: 10px; margin-bottom: 10px; background: #e3f2fd; border-radius: 4px; display: none;">
+            <small id="map-status-text"></small>
+          </div>
+          <div id="map" style="width: 100%; height: 400px; border-radius: 8px; background: #f5f5f5; border: 1px solid #ddd;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-list"></i>
+            My Saved Destinations
+            <span class="badge badge-primary" id="destCount">0</span>
+          </h3>
+        </div>
+        <div class="card-body">
+          <div id="destinationsList" style="min-height: 200px;">
+            <div style="text-align: center; color: #999; padding: 40px 20px;">
+              <i class="fas fa-map-marked-alt" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+              <p>No destinations saved yet</p>
+              <p style="font-size: 14px;">Add your first destination using the form on the left!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simple Stats -->
+      <div class="card">
+        <div class="card-header">
+          <h3 style="margin: 0; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-chart-bar"></i>
+            Quick Stats
+          </h3>
+        </div>
+        <div class="card-body">
+          <div style="display: flex; justify-content: space-around; text-align: center;">
+            <div>
+              <div style="font-size: 24px; font-weight: bold; color: #3498db;" id="totalDestinations">0</div>
+              <div style="color: #666; font-size: 14px;">Total Saved</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='destinations.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const addBtn = document.getElementById('addDestinationBtn');
+    const titleInput = document.getElementById('destTitle');
+    const catInput = document.getElementById('destCategory');
+    const budgetInput = document.getElementById('destBudget');
+    const descInput = document.getElementById('destDescription');
+    const websiteInput = document.getElementById('destWebsite');
+    const msg = document.getElementById('destMessage');
+    const list = document.getElementById('destinationsList');
+    const count = document.getElementById('destCount');
+    const totalCount = document.getElementById('totalDestinations');
+
+    // Load destinations when page loads
+    fetchDestinations();
+
+    // Add new destination
+    addBtn?.addEventListener('click', async () => {
+        if (!msg) return;
+        msg.textContent = '';
+        const title = (titleInput?.value || '').trim();
+        if (!title) {
+            msg.textContent = 'Please enter a destination name';
+            msg.style.color = '#e74c3c';
+            return;
+        }
+
+        const body = {
+            title,
+            description: (descInput?.value || '').trim(),
+            category: (catInput?.value || '').trim(),
+            budget_tier: (budgetInput?.value || '').trim(),
+            website: (websiteInput?.value || '').trim()
+        };
+
+        try {
+            const resp = await fetch('/api/destinations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            if (!resp.ok) {
+                const err = await resp.json().catch(()=>({error:'Failed to save'}));
+                msg.textContent = err.error || 'Could not save destination';
+                msg.style.color = '#e74c3c';
+                return;
+            }
+
+            msg.textContent = 'Destination saved!';
+            msg.style.color = '#27ae60';
+
+            // Clear form
+            titleInput.value = '';
+            descInput.value = '';
+            catInput.value = 'cities';
+            budgetInput.value = 'budget';
+            websiteInput.value = '';
+
+            fetchDestinations();
+        } catch (e) {
+            msg.textContent = 'Error saving destination';
+            msg.style.color = '#e74c3c';
+        }
+    });
+
+    async function fetchDestinations() {
+        if (!list) return;
+        try {
+            const resp = await fetch('/api/destinations');
+            if (!resp.ok) throw new Error('Could not load destinations');
+            const data = await resp.json();
+            renderDestinations(data || []);
+        } catch (e) {
+            list.innerHTML = '<div style="text-align: center; color: #e74c3c; padding: 20px;">Could not load destinations</div>';
+        }
+    }
+
+    function renderDestinations(items) {
+        if (!list || !count || !totalCount) return;
+
+        count.textContent = items.length;
+        totalCount.textContent = items.length;
+
+        if (!items.length) {
+            list.innerHTML = `
+                <div style="text-align: center; color: #999; padding: 40px 20px;">
+                    <i class="fas fa-map-marked-alt" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+                    <p>No destinations saved yet</p>
+                    <p style="font-size: 14px;">Add your first destination using the form!</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = '';
+        items.forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'destination-item';
+            div.innerHTML = `
+                <div class="destination-content">
+                    <div class="destination-header">
+                        <strong>${escapeHtml(d.title)}</strong>
+                        <div class="destination-actions">
+                            <button class="btn-small btn-outline" onclick="editDestination(${d.id}, '${escapeHtml(d.title)}', '${escapeHtml(d.description || '')}', '${d.category || ''}', '${d.budget_tier || ''}', '${escapeHtml(d.website || '')}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn-small btn-danger" onclick="deleteDestination(${d.id})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="destination-meta">
+                        <span class="tag">${d.category || 'City'}</span>
+                        <span class="budget">${d.budget_tier || 'Budget'}</span>
+                    </div>
+                    ${d.description ? `<div class="destination-notes">${escapeHtml(d.description)}</div>` : ''}
+                    ${d.website ? `<div class="destination-website"><a href="${escapeHtml(d.website)}" target="_blank">Visit Website <i class="fas fa-external-link-alt"></i></a></div>` : ''}
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    // Make functions global for onclick handlers
+    window.editDestination = async (id, currentTitle, currentDesc, currentCat, currentBudget, currentWebsite) => {
+        const newTitle = prompt('Edit destination name:', currentTitle);
+        if (!newTitle || newTitle.trim() === currentTitle) return;
+
+        const payload = {
+            title: newTitle.trim(),
+            description: currentDesc,
+            category: currentCat,
+            budget_tier: currentBudget,
+            website: currentWebsite
+        };
+
+        try {
+            const resp = await fetch('/api/destinations/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!resp.ok) {
+                alert('Could not update destination');
+                return;
+            }
+
+            fetchDestinations();
+        } catch (err) {
+            alert('Update failed');
+        }
+    };
+
+    window.deleteDestination = async (id) => {
+        if (!confirm('Are you sure you want to delete this destination?')) return;
+
+        try {
+            const resp = await fetch('/api/destinations/' + id, { method: 'DELETE' });
+            if (!resp.ok) throw new Error('Delete failed');
+            fetchDestinations();
+        } catch (err) {
+            alert('Could not delete destination');
+        }
+    };
+
+    function escapeHtml(s) {
+        return String(s || '').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'<','>':'>','\"':'"',"'":'&#39;'}[c]));
+    }
+});
+</script>
+{% endblock %}

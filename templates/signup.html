@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up — Mini Project{% endblock %}
+{% block content %}
+
+<div class="signup-container">
+  <div class="form-container">
+    <div class="text-center">
+      <h2>Create Your Account</h2>
+      <p>Join Mini Project and start planning your dream trips!</p>
+    </div>
+
+    <form id="signupForm" onsubmit="return false;">
+      <!-- Personal Information -->
+      <h4>Personal Information</h4>
+
+      <div class="form-group">
+        <label for="name">
+          <i class="fas fa-user"></i>
+          Full Name*
+        </label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          class="form-control"
+          placeholder="Enter your full name"
+          required
+          autocomplete="name"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">
+          <i class="fas fa-envelope"></i>
+          Email Address*
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          class="form-control"
+          placeholder="your@email.com"
+          required
+          autocomplete="email"
+        />
+      </div>
+
+      <!-- Account Security -->
+      <h4>Account Security</h4>
+
+      <div class="form-group">
+        <label for="password">
+          <i class="fas fa-lock"></i>
+          Password*
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          class="form-control"
+          placeholder="Create a strong password (min 6 characters)"
+          minlength="6"
+          required
+          autocomplete="new-password"
+        />
+        <small style="color: #666; font-size: 12px; margin-top: 5px; display: block;">
+          Min 6 characters with letters, numbers, and symbols for better security
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmpassword">
+          <i class="fas fa-lock"></i>
+          Confirm Password*
+        </label>
+        <input
+          id="confirmpassword"
+          name="confirmpassword"
+          type="password"
+          class="form-control"
+          placeholder="Confirm your password"
+          minlength="6"
+          required
+          autocomplete="new-password"
+        />
+        <span id="passworderror" style="color: #e74c3c; font-size: 14px; display: none;"></span>
+      </div>
+
+      <button type="submit" class="submit-btn">
+        <i class="fas fa-user-plus"></i>
+        Create Account
+      </button>
+
+      <div id="formMsg" class="form-message"></div>
+    </form>
+
+    <!-- Login Link -->
+    <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee;">
+      <p style="margin: 0; color: #666;">
+        Already have an account?
+        <a href="{{ url_for('login') }}" style="color: #3498db; text-decoration: none; font-weight: bold;">
+          Sign in here
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Password strength indicator (simplified)
+  const passwordInput = document.getElementById('password');
+
+  if (passwordInput) {
+    passwordInput.addEventListener('input', function() {
+      const password = this.value;
+      let feedback = '';
+
+      if (password.length < 6) {
+        feedback = '⚠️ Password should be at least 6 characters';
+        this.style.borderColor = '#e74c3c';
+      } else if (password.length >= 10 && /[A-Z]/.test(password) && /\d/.test(password)) {
+        feedback = '✅ Strong password';
+        this.style.borderColor = '#27ae60';
+      } else if (password.length >= 6 && (/[A-Z]/.test(password) || /\d/.test(password))) {
+        feedback = '⚡ Good password - add uppercase or numbers for stronger security';
+        this.style.borderColor = '#f39c12';
+      } else {
+        feedback = '🔒 Password meets minimum requirements';
+        this.style.borderColor = '#ddd';
+      }
+
+      // Update feedback if there's a feedback element
+      const feedbackEl = this.parentElement.querySelector('.password-feedback');
+      if (feedbackEl) {
+        feedbackEl.textContent = feedback;
+      }
+    });
+  }
+
+  // Password confirmation validation
+  const confirmPasswordFields = document.querySelectorAll('input[name="confirmpassword"]');
+  confirmPasswordFields.forEach(field => {
+    field.addEventListener('input', function() {
+      const passwordField = document.querySelector('input[name="password"]');
+      const errorSpan = document.getElementById('passworderror');
+
+      if (passwordField && errorSpan) {
+        if (this.value !== passwordField.value) {
+          errorSpan.textContent = 'Passwords do not match';
+          errorSpan.style.display = 'block';
+        } else {
+          errorSpan.textContent = '';
+          errorSpan.style.display = 'none';
+        }
+      }
+    });
+  });
+
+  // Toggle password visibility
+  document.querySelectorAll('.toggle-password').forEach(button => {
+    button.addEventListener('click', function() {
+      const passwordInput = this.previousElementSibling;
+      const icon = this.querySelector('i');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  });
+
+  // Form submission
+  const signupForm = document.getElementById('signupForm');
+  const formMsg = document.getElementById('formMsg');
+
+  if (signupForm) {
+    signupForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+
+      // Validate form
+      const name = this.elements['name'].value.trim();
+      const email = this.elements['email'].value.trim();
+      const password = this.elements['password'].value;
+
+      // Clear previous messages
+      if (formMsg) {
+        formMsg.textContent = '';
+        formMsg.className = 'form-message';
+      }
+
+      // Validation
+      if (name.length < 2) {
+        if (formMsg) {
+          formMsg.textContent = 'Please enter a valid full name (at least 2 characters)';
+          formMsg.className = 'form-message error';
+        }
+        return;
+      }
+
+      if (!email.includes('@') || !email.includes('.')) {
+        if (formMsg) {
+          formMsg.textContent = 'Please enter a valid email address';
+          formMsg.className = 'form-message error';
+        }
+        return;
+      }
+
+      if (password.length < 6) {
+        if (formMsg) {
+          formMsg.textContent = 'Password must be at least 6 characters long';
+          formMsg.className = 'form-message error';
+        }
+        return;
+      }
+
+      const confirmPassword = this.elements['confirmpassword'].value;
+      if (password !== confirmPassword) {
+        if (formMsg) {
+          formMsg.textContent = 'Passwords do not match';
+          formMsg.className = 'form-message error';
+        }
+        return;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+
+      const formData = new FormData(this);
+
+      try {
+        const response = await fetch('{{ url_for("api_signup") }}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.get('name'),
+            email: formData.get('email'),
+            password: formData.get('password'),
+            confirmpassword: formData.get('confirmpassword')
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          if (formMsg) {
+            formMsg.textContent = data.message || 'Account created successfully! Welcome to Mini Project!';
+            formMsg.className = 'form-message success';
+          }
+          setTimeout(() => {
+            window.location.href = '{{ url_for("index") }}';
+          }, 2000);
+        } else {
+          if (formMsg) {
+            formMsg.textContent = data.error || 'Account creation failed. Please try again.';
+            formMsg.className = 'form-message error';
+          }
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      } catch (error) {
+        console.error('Signup error:', error);
+        if (formMsg) {
+          formMsg.textContent = 'Network error. Please check your connection and try again.';
+          formMsg.className = 'form-message error';
+        }
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    });
+  }
+</script>
+{% endblock %}

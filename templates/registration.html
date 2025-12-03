@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Registration — Mini Project{% endblock %}
+{% block content %}
+<a href="{{ url_for('index') }}" class="back-btn">← Back to Home</a>
+
+<form class="form-container" id="registration-form" action="/submit_registration" method="post">
+  <h3>Create account</h3>
+
+  <label for="firstname">First Name:</label>
+  <input type="text" id="firstname" name="firstname" placeholder="First Name" required>
+
+  <label for="lastname">Last Name:</label>
+  <input type="text" id="lastname" name="lastname" placeholder="Last Name">
+
+  <label for="mobilenumber">Mobile Number:</label>
+  <input type="tel" id="mobilenumber" name="mobilenumber" placeholder="1234567890" pattern="[0-9]{10}" required>
+
+  <label for="emailid">Email:</label>
+  <input type="email" id="emailid" name="emailid" placeholder="Email ID" required>
+  <span id="emailerror" style="color:red"></span>
+
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" placeholder="Password" minlength="9" maxlength="18" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{9,}" title="Must contain at least one number, one uppercase and one lowercase letter, and be at least 9 characters" required>
+
+  <label for="confirmpassword">Confirm Password:</label>
+  <input type="password" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password" required>
+  <span id="passworderror" class="error" style="color:red"></span>
+
+  <button type="submit" class="submit-btn" id="submit-btn">Create Account</button>
+</form>
+
+{% endblock %}
+{% block extra_js %}
+  <script src="/static/registration.js"></script>
+{% endblock %}

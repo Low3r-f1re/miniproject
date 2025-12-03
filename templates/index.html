@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}Home - Mini Project{% endblock %}
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content-wrapper">
+      <div class="hero-badge">
+        <span>✈️ Your Travel Journey Starts Here</span>
+      </div>
+      {% if current_user.is_authenticated %}
+      <h1 class="hero-title">Welcome back, {{ current_user.name }}!</h1>
+      <p class="hero-description">
+        Ready to plan your next adventure? Explore destinations, get AI-powered recommendations, and create unforgettable memories.
+      </p>
+      {% else %}
+      <h1 class="hero-title" data-translate="discover-amazing-places">Discover Amazing Places</h1>
+      <p class="hero-description" data-translate="explore-breathtaking-destinations">
+        Explore breathtaking destinations, plan unforgettable trips, and create memories around the world with Mini Project.
+      </p>
+      {% endif %}
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-number">500+</div>
+          <div class="stat-label">Destinations</div>
+        </div>
+        <div class="stat-divider">•</div>
+        <div class="stat">
+          <div class="stat-number">10K+</div>
+          <div class="stat-label">Travelers</div>
+        </div>
+        <div class="stat-divider">•</div>
+        <div class="stat">
+          <div class="stat-number">4.9</div>
+          <div class="stat-label">Rating</div>
+        </div>
+      </div>
+      {% if not current_user.is_authenticated %}
+      <div class="hero-buttons">
+        <a href="{{ url_for('signup_page') }}" class="btn btn-secondary btn-large" data-translate="get-started">
+          <i class="fas fa-user-plus"></i> Get Started Free
+        </a>
+      </div>
+      {% endif %}
+      <div class="hero-scroll">
+        <p>Scroll to explore</p>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if current_user.is_authenticated %}
+<!-- Dashboard Section -->
+<section class="dashboard-section">
+  <div class="container">
+    <h2 class="section-title">Your Travel Dashboard</h2>
+    <div class="dashboard-grid">
+      <div class="card">
+        <div class="feature-icon">
+          <i class="fas fa-map-marked-alt" style="font-size: 36px; color: #3498db;"></i>
+        </div>
+        <h3>Explore Destinations</h3>
+        <p>Discover new places and plan your next trip.</p>
+        <a href="/destinations" class="btn btn-primary">Browse Destinations</a>
+      </div>
+
+      <div class="card">
+        <div class="feature-icon">
+          <i class="fas fa-magic" style="font-size: 36px; color: #e74c3c;"></i>
+        </div>
+        <h3>AI Recommendations</h3>
+        <p>Get personalized travel suggestions powered by AI.</p>
+        <a href="/recommendations" class="btn btn-primary">Get Recommendations</a>
+      </div>
+
+      <div class="card">
+        <div class="feature-icon">
+          <i class="fas fa-calendar-alt" style="font-size: 36px; color: #27ae60;"></i>
+        </div>
+        <h3>Plan Your Trip</h3>
+        <p>Create detailed itineraries and manage your travel plans.</p>
+        <a href="/registration" class="btn btn-primary">Start Planning</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="container">
+    <h2 class="section-title" data-translate="why-choose-us">Why Choose Us?</h2>
+    <div class="features-grid">
+      <div class="card">
+        <div class="feature-icon">
+          <i class="fas fa-globe" style="font-size: 36px; color: #3498db;"></i>
+        </div>
+        <h3 data-translate="global-destinations">Global Destinations</h3>
+        <p>Access hundreds of destinations worldwide with detailed information and travel tips.</p>
+      </div>
+
+      <div class="card">
+        <div class="feature-icon">
+          <i class="fas fa-map-marked-alt" style="font-size: 36px; color: #3498db;"></i>
+        </div>
+        <h3 data-translate="interactive-maps">Interactive Maps</h3>
+        <p>Visualize your journey with interactive maps and planning tools.</p>
+      </div>
+
+      <div class="card">
+        <div class="feature-icon">
+          <i class="fas fa-wallet" style="font-size: 36px; color: #3498db;"></i>
+        </div>
+        <h3 data-translate="budget-planning">Budget Planning</h3>
+        <p>Track expenses and manage your travel budget effectively.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Destinations Preview -->
+<section class="destinations-section">
+  <div class="container">
+    <h2 class="section-title">Popular Destinations</h2>
+    <div class="destinations-grid">
+      <div class="card">
+        <div class="destination-image">
+          <img src="/static/paris.jpg" alt="Paris">
+        </div>
+        <h3>Paris, France</h3>
+        <p>The city of light and love, famous for the Eiffel Tower and Louvre Museum.</p>
+        <a href="/destinations" class="btn btn-outline">Learn More</a>
+      </div>
+
+      <div class="card">
+        <div class="destination-image">
+          <img src="/static/tokyo.jpg" alt="Tokyo">
+        </div>
+        <h3>Tokyo, Japan</h3>
+        <p>A vibrant metropolis where tradition meets cutting-edge technology.</p>
+        <a href="/destinations" class="btn btn-outline">Learn More</a>
+      </div>
+
+      <div class="card">
+        <div class="destination-image">
+          <img src="/static/bali.jpg" alt="Bali">
+        </div>
+        <h3>Bali, Indonesia</h3>
+        <p>Tropical paradise with beautiful beaches and rich culture.</p>
+        <a href="/destinations" class="btn btn-outline">Learn More</a>
+      </div>
+    </div>
+
+    <div class="text-center">
+      <a href="/destinations" class="btn btn-primary btn-large">View All Destinations</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

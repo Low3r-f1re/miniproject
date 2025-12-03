@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Your Location - Travel Planner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='location_permission.css') }}">
+</head>
+<body>
+    <div class="location-overlay" id="locationOverlay">
+        <div class="location-modal" id="locationModal">
+            <!-- Location Permission Request -->
+            <div class="location-step" id="permissionStep">
+                <div class="modal-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="#4285f4" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" fill="#4285f4"/>
+                        <path d="M12 2 L12 6" stroke="#4285f4" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 18 L12 22" stroke="#4285f4" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M2 12 L6 12" stroke="#4285f4" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M18 12 L22 12" stroke="#4285f4" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h2>Share Your Location</h2>
+                <p class="modal-description">
+                    To provide you with personalized travel recommendations and accurate distance calculations, 
+                    we need to know your location.
+                </p>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" id="allowLocationBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="currentColor"/>
+                            <circle cx="12" cy="9" r="2.5" fill="white"/>
+                        </svg>
+                        Allow Location
+                    </button>
+                    <button class="btn btn-secondary" id="enterManuallyBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/>
+                        </svg>
+                        Enter Manually Instead
+                    </button>
+                </div>
+                
+                <button class="btn-link" id="whyNeedBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 16v-4m0-4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Why we need this?
+                </button>
+            </div>
+
+            <!-- Manual Entry Form -->
+            <div class="location-step hidden" id="manualStep">
+                <div class="modal-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#4285f4" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="#4285f4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2>Enter Your Location</h2>
+                <p class="modal-description">
+                    Enter your city or country to get started.
+                </p>
+                
+                <form id="manualLocationForm">
+                    <div class="form-group">
+                        <label for="cityInput">City or Address</label>
+                        <div class="input-with-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="#5f6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="10" r="3" stroke="#5f6368" stroke-width="2"/>
+                            </svg>
+                            <input 
+                                type="text" 
+                                id="cityInput" 
+                                name="city" 
+                                placeholder="e.g., Mumbai, India" 
+                                autocomplete="off"
+                                required
+                            />
+                            <div class="loading-spinner hidden" id="cityInputSpinner"></div>
+                        </div>
+                        <div class="autocomplete-dropdown hidden" id="autocompleteDropdown"></div>
+                        <p class="input-hint">Start typing to see suggestions</p>
+                    </div>
+                    
+                    <div class="error-message hidden" id="manualError"></div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary" id="saveLocationBtn">
+                            Save Location
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="backToPermissionBtn">
+                            Back
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Why We Need Location -->
+            <div class="location-step hidden" id="whyStep">
+                <div class="modal-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="#4285f4" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" fill="#34a853"/>
+                        <path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke="#fbbc04" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h2>Why We Need Your Location</h2>
+                
+                <div class="why-list">
+                    <div class="why-item">
+                        <div class="why-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M9 11l3 3L22 4" stroke="#34a853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="#34a853" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="why-content">
+                            <h3>Personalized Recommendations</h3>
+                            <p>Get travel suggestions tailored to your location and preferences</p>
+                        </div>
+                    </div>
+                    
+                    <div class="why-item">
+                        <div class="why-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="#4285f4" stroke-width="2"/>
+                                <path d="M12 6v6l4 2" stroke="#4285f4" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <div class="why-content">
+                            <h3>Accurate Distance & Travel Time</h3>
+                            <p>Calculate real distances and travel times from your location</p>
+                        </div>
+                    </div>
+                    
+                    <div class="why-item">
+                        <div class="why-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#34a853"/>
+                            </svg>
+                        </div>
+                        <div class="why-content">
+                            <h3>Realistic Budget Estimates</h3>
+                            <p>Get accurate cost calculations including transportation from your city</p>
+                        </div>
+                    </div>
+                    
+                    <div class="why-item">
+                        <div class="why-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 22s-8-4.5-8-11.8A8 8 0 0120 10.2c0 7.3-8 11.8-8 11.8z" fill="#ea4335"/>
+                                <circle cx="12" cy="10" r="3" fill="white"/>
+                            </svg>
+                        </div>
+                        <div class="why-content">
+                            <h3>Find Nearby Places</h3>
+                            <p>Discover restaurants, attractions, and activities near you or your destination</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="privacy-note">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="11" width="18" height="11" rx="2" stroke="#5f6368" stroke-width="2"/>
+                        <path d="M7 11V7a5 5 0 0110 0v4" stroke="#5f6368" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <p>Your privacy is important to us. Your location data is stored securely and never shared with third parties.</p>
+                </div>
+                
+                <button class="btn btn-primary" id="backFromWhyBtn">
+                    Got it!
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div class="location-step hidden" id="loadingStep">
+                <div class="loading-animation">
+                    <div class="spinner-large"></div>
+                </div>
+                <h2>Getting Your Location...</h2>
+                <p class="modal-description" id="loadingMessage">Please wait while we detect your location</p>
+            </div>
+
+            <!-- Success State -->
+            <div class="location-step hidden" id="successStep">
+                <div class="modal-icon success">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" fill="#34a853"/>
+                        <path d="M7 12l3 3 7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2>Location Saved!</h2>
+                <p class="modal-description" id="successMessage">
+                    Your location has been saved successfully.
+                </p>
+                <button class="btn btn-primary" id="continueBtn">
+                    Continue to Dashboard
+                </button>
+            </div>
+
+            <!-- Error State -->
+            <div class="location-step hidden" id="errorStep">
+                <div class="modal-icon error">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="#ea4335" stroke-width="2"/>
+                        <path d="M15 9l-6 6m0-6l6 6" stroke="#ea4335" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h2>Location Access Denied</h2>
+                <p class="modal-description" id="errorMessage">
+                    We couldn't access your location. You can enter it manually instead.
+                </p>
+                <button class="btn btn-primary" id="retryBtn">
+                    Enter Manually
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='location_permission.js') }}"></script>
+</body>
+</html>

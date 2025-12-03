@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mini Project{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='simple-styles.css') }}?v=1.0.0">
+    
+    <!-- Leaflet CSS for maps (local) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='leaflet.css') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fas fa-globe-americas"></i>
+                Mini Project
+            </a>
+
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="/destinations" class="nav-link"><i class="fas fa-map"></i> Destinations</a></li>
+                    <li><a href="/recommendations" class="nav-link"><i class="fas fa-magic"></i> AI Recommendations</a></li>
+                    <li class="nav-link">{{ current_user.name }}</li>
+                    <li><a href="{{ url_for('logout') }}" class="cta-button">Logout</a></li>
+                {% else %}
+                    <li><a href="/login" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                    <li><a href="/signup" class="cta-button">Sign Up</a></li>
+                {% endif %}
+
+                <!-- Language Selector -->
+                <li class="language-selector">
+                    <select id="language-select" onchange="changeLanguage(this.value)">
+                        <option value="en" {% if session.get('language') == 'en' or not session.get('language') %}selected{% endif %}>English</option>
+                        <option value="hi" {% if session.get('language') == 'hi' %}selected{% endif %}>हिंदी</option>
+                        <option value="kn" {% if session.get('language') == 'kn' %}selected{% endif %}>ಕನ್ನಡ</option>
+                    </select>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="notification-container">
+                    {% for category, message in messages %}
+                        <div class="notification notification-{{ category }}">
+                            {{ message }}
+                            <span class="notification-close" onclick="this.parentElement.remove()">×</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Mini Project</h4>
+                    <p>Your journey starts here. Discover amazing places around the world.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
+                        {% if current_user.is_authenticated %}
+                            <li><a href="{{ url_for('destinations_page') }}">Destinations</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('registration_page') }}">Plan Trip</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Mini Project. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Leaflet JS for maps (local) -->
+    <script src="{{ url_for('static', filename='leaflet.js') }}"></script>
+    <!-- Real-time location tracking -->
+    <script src="{{ url_for('static', filename='location.js') }}"></script>
+    <script src="/static/script.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% block title %}Login — Mini Project{% endblock %}
+{% block content %}
+
+<div class="container">
+  <div style="max-width: 400px; margin: 50px auto;">
+    <div class="card">
+      <div class="card-header" style="text-align: center;">
+        <h2 style="margin: 0; color: #2c3e50;">
+          <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
+          Login to Your Account
+        </h2>
+        <p style="margin: 5px 0 0 0; color: #666; font-size: 16px;">Welcome back! Please sign in.</p>
+      </div>
+
+      <div class="card-body">
+        <form id="loginForm" method="post">
+          <div class="form-group">
+            <label for="email">
+              <i class="fas fa-envelope" style="margin-right: 5px;"></i>
+              Email Address*
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              class="form-control"
+              placeholder="Enter your email address"
+              required
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">
+              <i class="fas fa-lock" style="margin-right: 5px;"></i>
+              Password*
+            </label>
+            <div style="position: relative;">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                class="form-control"
+                placeholder="Enter your password"
+                required
+                autocomplete="current-password"
+              />
+              <button type="button" class="toggle-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #666; cursor: pointer;">
+                <i class="far fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 14px;">
+              <input type="checkbox" name="remember" style="margin: 0;">
+              Remember me
+            </label>
+            <a href="{{ url_for('forgot_password') }}" style="color: #3498db; text-decoration: none; font-size: 14px;">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            <i class="fas fa-sign-in-alt" style="margin-right: 5px;"></i>
+            Sign In
+          </button>
+
+          <div id="formMsg" class="form-message" style="margin-top: 15px;"></div>
+        </form>
+
+        <!-- Divider -->
+        <div style="text-align: center; margin: 20px 0; position: relative;">
+          <span style="background: white; padding: 0 15px; color: #666; font-size: 14px;">or</span>
+          <hr style="border: none; height: 1px; background: #ddd; margin: 0;">
+        </div>
+
+        <!-- Social Login (Optional) -->
+        <div style="text-align: center; margin-bottom: 20px;">
+          <button style="width: 100%; padding: 10px; background: #dd4b39; color: white; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 10px;">
+            <i class="fab fa-google" style="margin-right: 5px;"></i>
+            Continue with Google
+          </button>
+          <button style="width: 100%; padding: 10px; background: #3b5998; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            <i class="fab fa-facebook" style="margin-right: 5px;"></i>
+            Continue with Facebook
+          </button>
+        </div>
+
+        <!-- Sign Up Link -->
+        <div style="text-align: center; padding: 15px 0; border-top: 1px solid #eee;">
+          <p style="margin: 0; color: #666;">
+            Don't have an account?
+            <a href="{{ url_for('signup_page') }}" style="color: #3498db; text-decoration: none; font-weight: bold;">
+              Sign up here
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Info Cards -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-body">
+        <h4>What you'll get:</h4>
+        <ul style="list-style: none; padding: 0;">
+          <li style="margin: 10px 0; padding-left: 20px; position: relative;">
+            <i class="fas fa-check-circle" style="color: #2ecc71; position: absolute; left: 0;"></i>
+            Access to saved destinations
+          </li>
+          <li style="margin: 10px 0; padding-left: 20px; position: relative;">
+            <i class="fas fa-check-circle" style="color: #2ecc71; position: absolute; left: 0;"></i>
+            Trip planning tools
+          </li>
+          <li style="margin: 10px 0; padding-left: 20px; position: relative;">
+            <i class="fas fa-check-circle" style="color: #2ecc71; position: absolute; left: 0;"></i>
+            Budget tracking features
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Toggle password visibility
+  document.querySelectorAll('.toggle-password').forEach(button => {
+    button.addEventListener('click', function() {
+      const passwordInput = this.previousElementSibling;
+      const icon = this.querySelector('i');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  });
+
+  // Handle form submission
+  const loginForm = document.getElementById('loginForm');
+  const formMsg = document.getElementById('formMsg');
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+
+      // Validate form
+      const email = this.elements['email'].value.trim();
+      const password = this.elements['password'].value;
+
+      // Clear previous messages
+      if (formMsg) {
+        formMsg.textContent = '';
+        formMsg.className = 'form-message';
+      }
+
+      // Validation
+      if (!email) {
+        if (formMsg) {
+          formMsg.textContent = 'Please enter your email address';
+          formMsg.className = 'form-message error';
+        }
+        return;
+      }
+
+      if (!email.includes('@') || !email.includes('.')) {
+        if (formMsg) {
+          formMsg.textContent = 'Please enter a valid email address';
+          formMsg.className = 'form-message error';
+        }
+        return;
+      }
+
+      if (!password) {
+        if (formMsg) {
+          formMsg.textContent = 'Please enter your password';
+          formMsg.className = 'form-message error';
+        }
+        return;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+
+      const formData = new FormData(this);
+
+      try {
+        const response = await fetch('{{ url_for("api_login") }}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.get('email'),
+            password: formData.get('password')
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          if (formMsg) {
+            formMsg.textContent = data.message || 'Login successful! Redirecting...';
+            formMsg.className = 'form-message success';
+          }
+          setTimeout(() => {
+            window.location.href = '{{ url_for("index") }}';
+          }, 1000);
+        } else {
+          if (formMsg) {
+            formMsg.textContent = data.error || 'Login failed. Please check your credentials and try again.';
+            formMsg.className = 'form-message error';
+          }
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        if (formMsg) {
+          formMsg.textContent = 'Network error. Please check your internet connection and try again.';
+          formMsg.className = 'form-message error';
+        }
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    });
+  }
+</script>
+{% endblock %}
