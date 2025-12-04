@@ -39,7 +39,7 @@ class OpenRouterService:
     def __init__(self, api_key: str = None):
         self.api_key = api_key or os.environ.get('OPENROUTER_API_KEY')
         self.base_url = "https://openrouter.ai/api/v1"
-        self.model = "x-ai/grok-4.1-fast:free"  # Using Grok model as specified
+        self.model = "meta-llama/llama-3.2-3b-instruct:free"  # Free model that actually exists
     
     @staticmethod
     def _generate_cache_key(data: Dict) -> str:
